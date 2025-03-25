@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Todo List</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=DM+Serif+Text:ital@0;1&display=swap" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/662a1bdfcd.js" crossorigin="anonymous"></script>
+
+    <link rel="stylesheet" href="./assets/css/style.css">
+</head>
+
+<body>
+    <div class="main">
+        <div class="container">
+                <div class="h1"> Todo List </div>
+
+                <div class="form">
+                    <label class="h2" for="task">Nueva Tarea</label>
+                    <div class="form-row">
+                            <input type="text" id="task-new" name="task" placeholder="Escribe tu tarea aquí...">
+                            <button class="btn-add" id="task-add">Agregar</button>
+                    </div>
+                </div>
+
+
+                <div class="task-info">
+                    <div class="task-count">
+                        <div>Total: <span id="task-total-all">0</span></div>
+                        <div> Realizadas: <span id="task-total-completed">0</span></div>
+                    </div>
+
+                    <div class="task-list-container"> 
+                        <div class="h3">
+                            <p class="col1">ID</p> 
+                            <p class="col2">Tarea</p> 
+                            <p class="col3">Estado</p> 
+                            <p class="col4">Borrar</p>
+                        </div>
+                        
+                        <ul class="task-list" id="task-list"></ul>
+                    </div>
+                </div>
+    </div>
+
+    <script>
+        const taskList = document.querySelector("#task-list");
+        const taskInput = document.querySelector("#task-new");
+        const btnAdd = document.querySelector("#task-add");
+
+        const taskTotalAll = document.querySelector("#task-total-all");
+        const taskTotalCompleted = document.querySelector("#task-total-completed");
+
+        const tasks = [
+            { id: 1, name: "Editar videos", complete: false },
+            { id: 2, name: "Agendar reunión", complete: false },
+            { id: 3, name: "Publicar reportes", complete: false }
+        ];
+
+        function renderTasks() {
+            let html = ""
+            for(let task of tasks){
+                html +=`<li style="${task.complete ? 'text-decoration: line-through; opacity: 0.5;' : ''}">
+                            <span class="col1">${task.id}</span> 
+                            <span class="col2 task-name">${task.name}</span>
+                            <span class="col3"><input type="checkbox" ${task.complete ? "checked" : ""} onchange="toggleComplete(${task.id})"></span>
+                            <span class="col4"><i class="fa-solid fa-xmark icon-delete" onclick="borrar(${task.id})"></i></span>
+                        </li>`;
+                };
+            
+            taskList.innerHTML = html
+            taskTotalAll.textContent = `${tasks.length}`;
+            taskTotalCompleted.textContent = tasks.filter(task => task.complete).length;
+        }
+
+
+        btnAdd.addEventListener("click", () => {
+            if (taskInput.value.trim() === "") return;
+            const maxID = tasks.length > 0 ? Math.max(...tasks.map(task => task.id)) : 0;
+            const newTask = {id: maxID + 1, name: taskInput.value, complete: false};
+            tasks.push(newTask);
+            taskInput.value = "";
+            renderTasks();
+            showMessage("Tarea agregada");
+        });
+
+        function borrar(id){
+            const index = tasks.findIndex((ele) => ele.id == id)
+            if (index !== -1) {
+                tasks.splice(index, 1);
+            }
+            renderTasks()
+            showMessage("Tarea eliminada");
+        }
+
+        function toggleComplete(id) {
+            const index = tasks.findIndex(task => task.id === id);
+            if (index !== -1) {
+                tasks[index].complete = !tasks[index].complete;
+            }
+            renderTasks();
+        }
+    renderTasks();  
+    
+        
+    </script>
+
+</body>
+</html>
